@@ -9,7 +9,7 @@ import {
 } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
 
-const STRIPE_PAYMENT_URL = 'https://buy.stripe.com/test_4gM9AM7Wtdc6eeacQ73F600';
+const STRIPE_PAYMENT_URL = 'https://buy.stripe.com/test_fZu8wI0u13Bw8TQg2j3F601';
 
 interface DownloadModalProps {
   open: boolean;
