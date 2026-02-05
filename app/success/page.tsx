@@ -1,73 +1,19 @@
 'use client';
 
-import { useEffect, useState } from 'react';
-import { useSearchParams, useRouter } from 'next/navigation';
+import { useEffect } from 'react';
+import { useRouter } from 'next/navigation';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { Suspense } from 'react';
 
-function SuccessContent() {
-  const searchParams = useSearchParams();
+export default function SuccessPage() {
   const router = useRouter();
-  const [status, setStatus] = useState<'loading' | 'success' | 'error'>('loading');
-  const sessionId = searchParams.get('session_id');
 
   useEffect(() => {
-    if (!sessionId) {
-      setStatus('error');
-      return;
-    }
-
-    const verifyPayment = async () => {
-      try {
-        const res = await fetch(`/api/stripe/verify?session_id=${sessionId}`);
-        const data = await res.json();
-        
-        if (data.success) {
-          localStorage.setItem('qr_pro', 'true');
-          localStorage.setItem('qr_pro_date', new Date().toISOString());
-          setStatus('success');
-        } else {
-          setStatus('error');
-        }
-      } catch {
-        setStatus('error');
-      }
-    };
-
-    verifyPayment();
-  }, [sessionId]);
-
-  if (status === 'loading') {
-    return (
-      <div className="min-h-screen flex items-center justify-center bg-gray-50">
-        <Card className="w-full max-w-md">
-          <CardContent className="pt-6 text-center">
-            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-purple-600 mx-auto" />
-            <p className="mt-4 text-gray-600">Verifying your payment...</p>
-          </CardContent>
-        </Card>
-      </div>
-    );
-  }
-
-  if (status === 'error') {
-    return (
-      <div className="min-h-screen flex items-center justify-center bg-gray-50 p-4">
-        <Card className="w-full max-w-md">
-          <CardHeader>
-            <CardTitle className="text-center text-red-600">Payment Issue</CardTitle>
-          </CardHeader>
-          <CardContent className="text-center space-y-4">
-            <p className="text-gray-600">
-              We couldn&apos;t verify your payment. Please try again or contact support.
-            </p>
-            <Button onClick={() => router.push('/')}>Back to Generator</Button>
-          </CardContent>
-        </Card>
-      </div>
-    );
-  }
+    // Payment Link only redirects here on successful payment
+    // So we can safely activate Pro status
+    localStorage.setItem('qr_pro', 'true');
+    localStorage.setItem('qr_pro_date', new Date().toISOString());
+  }, []);
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-purple-50 to-pink-50 p-4">
@@ -108,17 +54,5 @@ function SuccessContent() {
         </CardContent>
       </Card>
     </div>
-  );
-}
-
-export default function SuccessPage() {
-  return (
-    <Suspense fallback={
-      <div className="min-h-screen flex items-center justify-center bg-gray-50">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-purple-600" />
-      </div>
-    }>
-      <SuccessContent />
-    </Suspense>
   );
 }
