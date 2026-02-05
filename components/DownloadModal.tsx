@@ -11,6 +11,16 @@ import { Button } from '@/components/ui/button';
 
 const STRIPE_PAYMENT_URL = 'https://buy.stripe.com/test_fZu8wI0u13Bw8TQg2j3F601';
 
+interface QRConfig {
+  url: string;
+  fgColor: string;
+  bgColor: string;
+  logo: string | null;
+  useGradient: boolean;
+  gradientColor1: string;
+  gradientColor2: string;
+}
+
 interface DownloadModalProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
@@ -20,6 +30,7 @@ interface DownloadModalProps {
   onDownloadPremium: () => void;
   isPro: boolean;
   downloadFormat: 'png' | 'svg';
+  qrConfig: QRConfig;
 }
 
 export default function DownloadModal({
@@ -31,10 +42,16 @@ export default function DownloadModal({
   onDownloadPremium,
   isPro,
   downloadFormat,
+  qrConfig,
 }: DownloadModalProps) {
   const handleDownloadFree = () => {
     onDownloadFree();
     onOpenChange(false);
+  };
+
+  const handlePaymentClick = () => {
+    // Save QR config to localStorage before redirecting to Stripe
+    localStorage.setItem('qr_pending_config', JSON.stringify(qrConfig));
   };
 
   return (
@@ -89,6 +106,7 @@ export default function DownloadModal({
               asChild
               className="w-full bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700"
               size="lg"
+              onClick={handlePaymentClick}
             >
               <a href={`${STRIPE_PAYMENT_URL}?prefilled_email=`}>
                 Pay $9 & Download with Premium

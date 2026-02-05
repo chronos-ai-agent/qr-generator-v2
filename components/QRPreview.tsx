@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect, useRef } from 'react';
-import QRCodeStyling from 'qr-code-styling';
+import QRCodeStyling, { DotType, CornerSquareType, CornerDotType } from 'qr-code-styling';
 
 export interface QRPreviewProps {
   url: string;
@@ -11,6 +11,9 @@ export interface QRPreviewProps {
   useGradient: boolean;
   gradientColor1: string;
   gradientColor2: string;
+  dotStyle: DotType;
+  cornerSquareStyle: CornerSquareType;
+  cornerDotStyle: CornerDotType;
 }
 
 export default function QRPreview({
@@ -21,6 +24,9 @@ export default function QRPreview({
   useGradient,
   gradientColor1,
   gradientColor2,
+  dotStyle,
+  cornerSquareStyle,
+  cornerDotStyle,
 }: QRPreviewProps) {
   const qrRef = useRef<HTMLDivElement>(null);
   const qrCode = useRef<QRCodeStyling | null>(null);
@@ -33,7 +39,7 @@ export default function QRPreview({
       data: url || 'https://example.com',
       dotsOptions: useGradient
         ? {
-            type: 'rounded',
+            type: dotStyle,
             gradient: {
               type: 'linear',
               rotation: 45,
@@ -45,17 +51,17 @@ export default function QRPreview({
           }
         : {
             color: fgColor,
-            type: 'rounded',
+            type: dotStyle,
           },
       backgroundOptions: {
         color: bgColor,
       },
       cornersSquareOptions: {
-        type: 'extra-rounded',
+        type: cornerSquareStyle,
         color: useGradient ? gradientColor1 : fgColor,
       },
       cornersDotOptions: {
-        type: 'dot',
+        type: cornerDotStyle,
         color: useGradient ? gradientColor2 : fgColor,
       },
       imageOptions: {
@@ -70,7 +76,7 @@ export default function QRPreview({
       qrRef.current.innerHTML = '';
       qrCode.current.append(qrRef.current);
     }
-  }, [url, fgColor, bgColor, logo, useGradient, gradientColor1, gradientColor2]);
+  }, [url, fgColor, bgColor, logo, useGradient, gradientColor1, gradientColor2, dotStyle, cornerSquareStyle, cornerDotStyle]);
 
   return (
     <div

@@ -27,10 +27,36 @@ export default function Home() {
     const proStatus = localStorage.getItem('qr_pro') === 'true';
     setIsPro(proStatus);
     
-    // Check for canceled payment
     const params = new URLSearchParams(window.location.search);
+    
+    // Check for canceled payment
     if (params.get('canceled') === 'true') {
       toast.error('Payment was canceled');
+      window.history.replaceState({}, '', '/');
+    }
+    
+    // Check for restored config after payment
+    if (params.get('restored') === 'true') {
+      const savedConfig = localStorage.getItem('qr_pending_config');
+      if (savedConfig) {
+        try {
+          const config = JSON.parse(savedConfig);
+          setUrl(config.url || 'https://example.com');
+          setFgColor(config.fgColor || '#000000');
+          setBgColor(config.bgColor || '#ffffff');
+          setLogo(config.logo || null);
+          setUseGradient(config.useGradient || false);
+          setGradientColor1(config.gradientColor1 || '#6366f1');
+          setGradientColor2(config.gradientColor2 || '#ec4899');
+          
+          // Clear the saved config
+          localStorage.removeItem('qr_pending_config');
+          
+          toast.success('Your QR code design has been restored! Download with Pro features now.');
+        } catch (e) {
+          console.error('Failed to restore QR config:', e);
+        }
+      }
       window.history.replaceState({}, '', '/');
     }
   }, []);
@@ -351,6 +377,15 @@ export default function Home() {
         onDownloadPremium={handleDownloadPremium}
         isPro={isPro}
         downloadFormat={downloadFormat}
+        qrConfig={{
+          url,
+          fgColor,
+          bgColor,
+          logo,
+          useGradient,
+          gradientColor1,
+          gradientColor2,
+        }}
       />
     </main>
   );

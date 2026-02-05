@@ -13,7 +13,16 @@ export default function SuccessPage() {
     // So we can safely activate Pro status
     localStorage.setItem('qr_pro', 'true');
     localStorage.setItem('qr_pro_date', new Date().toISOString());
-  }, []);
+    
+    // Check if there's a pending QR config to restore
+    const pendingConfig = localStorage.getItem('qr_pending_config');
+    if (pendingConfig) {
+      // Auto-redirect to home with restore flag after a brief delay
+      setTimeout(() => {
+        router.push('/?restored=true');
+      }, 2000);
+    }
+  }, [router]);
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-purple-50 to-pink-50 p-4">
